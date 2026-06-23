@@ -5,7 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "asyncpg>=0.31.0",
     "httpx>=0.28.1",
     "load-dotenv>=0.1.0",
     "mcp[cli]>=1.28.0",
 ]
+
+[dependency-groups]
+dev = [
+    "black>=26.5.1",
+    "pre-commit>=4.6.0",
+    "ruff>=0.15.18",
+]
+
+[tool.black]
+target-version = ["py314"]
