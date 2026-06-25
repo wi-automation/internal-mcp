@@ -1,0 +1,14 @@
+services:
+  internal-mcp:
+    build:
+      context: .
+    image: internal-mcp:local
+    container_name: internal-mcp
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: 8014
+    ports:
+      - "8014:8014"

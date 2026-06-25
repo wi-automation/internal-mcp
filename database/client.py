@@ -30,8 +30,9 @@ class AsyncpgDatabaseClient:
         placeholders = [f"${index}" for index in range(1, len(record) + 1)]
         values = list(record.values())
 
+        # Identifiers are validated/quoted; values use parameters.
         query = (
-            f"insert into {table_name} ({', '.join(columns)}) "
+            f"insert into {table_name} ({', '.join(columns)}) "  # nosec B608
             f"values ({', '.join(placeholders)}) "
             "returning *"
         )

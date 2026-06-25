@@ -1,3 +1,3 @@
 from typing import Literal
 
-Provider = Literal["discord"]
+Provider = Literal["discord", "mattermost"]

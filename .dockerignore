@@ -1,0 +1,10 @@
+.git
+.idea
+.ruff_cache
+.venv
+__pycache__
+*.py[cod]
+*.log
+.env
+.env.*
+Dockerfile

@@ -11,3 +11,9 @@ repos:
         entry: uv run black
         language: system
         types_or: [python, pyi]
+      - id: bandit
+        name: bandit
+        entry: uv run bandit
+        language: system
+        types_or: [python, pyi]
+        args: [-r]
