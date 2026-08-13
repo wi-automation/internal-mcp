@@ -7,6 +7,7 @@ from tools import (
     add_clickup_comment,
     complete_clickup_task,
     create_clickup_task,
+    get_server_info,
     insert_record,
     send_notification,
 )
@@ -32,6 +33,7 @@ mcp.tool()(insert_record)
 mcp.tool()(create_clickup_task)
 mcp.tool()(complete_clickup_task)
 mcp.tool()(add_clickup_comment)
+mcp.tool()(get_server_info)
 
 
 if __name__ == "__main__":
