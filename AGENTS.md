@@ -32,3 +32,14 @@ and register new MCP tools in `server.py` and `tools/__init__.py`.
 - Run `uv run ruff check .` and targeted Python compilation after changes.
 - Do not make real external API calls during verification unless the user
   explicitly requested the corresponding mutation.
+
+## Versioning
+
+- Every committed code, configuration, or repository-instruction change must
+  include a semantic version bump.
+- Use a patch bump for fixes, maintenance, documentation, or instruction
+  changes; a minor bump for backward-compatible tools or features; and a major
+  bump for incompatible changes.
+- Keep the version in `pyproject.toml` and the root `internal-mcp` package
+  version in `uv.lock` synchronized in the same commit.
+- Verify `get_server_info` returns the new version before committing.
