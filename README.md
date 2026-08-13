@@ -139,7 +139,22 @@ grammata_lists = await provider.find_lists("Grammata")
 
 `find_lists()` returns matching list IDs together with their folder, space, and
 workspace location. These discovery methods are provider methods rather than
-separately registered MCP tools.
+ad hoc scripts.
+
+## ClickUp discovery tools
+
+Use `find_clickup_lists` before creating a task when only a list or project name
+is known. It searches list and folder names and returns the numeric list ID with
+its workspace, space, and folder location.
+
+Use `find_clickup_users` before assigning a task when only a person's name or
+email address is known. It returns matching numeric user IDs and their workspace
+locations. Both tools perform case-insensitive partial matching and are
+read-only.
+
+Agents should use these discovery tools instead of passing names as IDs or
+silently omitting requested assignees. If discovery returns multiple matches,
+ask the user to select the intended result before creating the task.
 
 ## Running the server
 

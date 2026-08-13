@@ -67,6 +67,9 @@ class ClickUpNotificationProvider:
 
     async def find_lists(self, name: str) -> list[dict[str, object]]:
         """Find accessible ClickUp lists or lists inside matching folders."""
+        if not name.strip():
+            raise ValueError("ClickUp list name is required")
+
         query = name.casefold()
         matches = []
 
@@ -90,6 +93,37 @@ class ClickUpNotificationProvider:
                         matches.append(
                             self._list_location(clickup_list, workspace, space)
                         )
+
+        return matches
+
+    async def find_users(self, query: str) -> list[dict[str, object]]:
+        """Find accessible ClickUp users by username or email address."""
+        if not query.strip():
+            raise ValueError("ClickUp user query is required")
+
+        normalized_query = query.casefold()
+        matches = []
+
+        for workspace in await self.get_workspaces():
+            for member in workspace.get("members", []):
+                user = member.get("user", {})
+                username = str(user.get("username") or "")
+                email = str(user.get("email") or "")
+                if normalized_query not in username.casefold() and (
+                    normalized_query not in email.casefold()
+                ):
+                    continue
+
+                matches.append(
+                    {
+                        "id": user.get("id"),
+                        "username": username,
+                        "email": email,
+                        "role": member.get("role"),
+                        "workspace": workspace.get("name"),
+                        "workspace_id": workspace.get("id"),
+                    }
+                )
 
         return matches
 

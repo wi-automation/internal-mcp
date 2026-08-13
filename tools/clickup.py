@@ -1,6 +1,36 @@
 from clickup import get_clickup_client
 
 
+async def find_clickup_lists(name: str) -> dict:
+    """
+    Find accessible ClickUp lists by list or folder name.
+
+    name: Full or partial list or folder name, matched case-insensitively.
+    """
+
+    try:
+        matches = await get_clickup_client().find_lists(name)
+    except ValueError as error:
+        return {"ok": False, "error": str(error)}
+
+    return {"ok": True, "count": len(matches), "matches": matches}
+
+
+async def find_clickup_users(query: str) -> dict:
+    """
+    Find accessible ClickUp users by username or email address.
+
+    query: Full or partial username or email, matched case-insensitively.
+    """
+
+    try:
+        matches = await get_clickup_client().find_users(query)
+    except ValueError as error:
+        return {"ok": False, "error": str(error)}
+
+    return {"ok": True, "count": len(matches), "matches": matches}
+
+
 async def add_clickup_comment(
     task_id: str,
     comment: str,
