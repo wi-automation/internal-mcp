@@ -3,7 +3,13 @@ import os
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
-from tools import create_clickup_task, insert_record, send_notification
+from tools import (
+    add_clickup_comment,
+    complete_clickup_task,
+    create_clickup_task,
+    insert_record,
+    send_notification,
+)
 
 load_dotenv()
 
@@ -24,6 +30,8 @@ mcp = FastMCP(
 mcp.tool()(send_notification)
 mcp.tool()(insert_record)
 mcp.tool()(create_clickup_task)
+mcp.tool()(complete_clickup_task)
+mcp.tool()(add_clickup_comment)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
-from clickup.client import StubClickUpClient
+from notification_providers.clickup import ClickUpNotificationProvider
 
 
-def get_clickup_client() -> StubClickUpClient:
-    return StubClickUpClient()
+def get_clickup_client() -> ClickUpNotificationProvider:
+    return ClickUpNotificationProvider()
