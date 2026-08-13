@@ -9,9 +9,11 @@ from tools import (
     create_clickup_task,
     find_clickup_lists,
     find_clickup_users,
+    get_clickup_task_statuses,
     get_server_info,
     insert_record,
     send_notification,
+    update_clickup_task_status,
 )
 
 load_dotenv()
@@ -27,6 +29,7 @@ mcp = FastMCP(
     This server exposes internal developer workflow tools.
     Use dry_run=true for tools that support it unless the user explicitly asks to execute the action.
     Resolve unknown ClickUp list and assignee IDs with find_clickup_lists and find_clickup_users before creating a task.
+    Use update_clickup_task_status for non-completed task statuses such as Development.
     Never send to management, all-company, or customer-facing channels unless explicitly requested.
     """,
 )
@@ -38,6 +41,8 @@ mcp.tool()(complete_clickup_task)
 mcp.tool()(add_clickup_comment)
 mcp.tool()(find_clickup_lists)
 mcp.tool()(find_clickup_users)
+mcp.tool()(get_clickup_task_statuses)
+mcp.tool()(update_clickup_task_status)
 mcp.tool()(get_server_info)
 
 

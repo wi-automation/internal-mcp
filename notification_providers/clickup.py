@@ -127,6 +127,33 @@ class ClickUpNotificationProvider:
 
         return matches
 
+    async def get_task(self, task_id: str) -> dict:
+        if not task_id.strip():
+            raise ValueError("ClickUp task_id is required")
+
+        return await self._request("GET", f"/task/{task_id}")
+
+    async def get_list(self, list_id: str) -> dict:
+        if not list_id.strip():
+            raise ValueError("ClickUp list_id is required")
+
+        return await self._request("GET", f"/list/{list_id}")
+
+    async def get_task_statuses(self, task_id: str) -> list[dict[str, object]]:
+        """Return the statuses configured for a task's home List."""
+        task = await self.get_task(task_id)
+        task_list = task.get("list") or {}
+        list_id = str(task_list.get("id") or "")
+        if not list_id:
+            raise ValueError("ClickUp task response did not include a home list ID")
+
+        clickup_list = await self.get_list(list_id)
+        statuses = clickup_list.get("statuses")
+        if not isinstance(statuses, list):
+            raise ValueError("ClickUp list response did not include statuses")
+
+        return statuses
+
     async def complete_task(
         self,
         task_id: str,
@@ -135,17 +162,46 @@ class ClickUpNotificationProvider:
         if not task_id:
             raise ValueError("ClickUp task_id is required")
 
-        task = await self._request(
-            "PUT",
-            f"/task/{task_id}",
-            {"status": self.completed_status},
-        )
+        task = await self.update_task_status(task_id, self.completed_status)
 
         result = {"task": task}
         if comment:
             result["comment"] = await self.add_comment(task_id, comment)
 
         return result
+
+    async def update_task_status(self, task_id: str, status: str) -> dict:
+        """Set a ClickUp task to a named status available in its list."""
+        if not task_id.strip():
+            raise ValueError("ClickUp task_id is required")
+        if not status.strip():
+            raise ValueError("ClickUp status is required")
+
+        statuses = await self.get_task_statuses(task_id)
+        matching_status = next(
+            (
+                item
+                for item in statuses
+                if str(item.get("status") or "").casefold() == status.casefold()
+            ),
+            None,
+        )
+        if matching_status is None:
+            available = [
+                str(item.get("status")) for item in statuses if item.get("status")
+            ]
+            raise ValueError(
+                f"ClickUp status '{status}' is not available for this task. "
+                f"Available statuses: {', '.join(available)}"
+            )
+
+        resolved_status = str(matching_status["status"])
+
+        return await self._request(
+            "PUT",
+            f"/task/{task_id}",
+            {"status": resolved_status},
+        )
 
     async def add_comment(self, task_id: str, comment: str) -> dict:
         if not task_id:

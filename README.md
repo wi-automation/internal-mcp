@@ -98,6 +98,25 @@ Use `complete_clickup_task` with ClickUp's internal task ID:
 The optional `comment` is added after the task is completed. If adding the
 comment fails, the task may already be complete.
 
+### Update a task status
+
+Use `update_clickup_task_status` with ClickUp's internal task ID and the exact
+status name configured in its list. It defaults to dry-run mode:
+
+```json
+{
+  "task_id": "86cb4t7jt",
+  "status": "Development",
+  "dry_run": true
+}
+```
+
+Use `get_clickup_task_statuses` to inspect the statuses configured for the
+task's home List. Real status updates fetch these statuses first, match the
+requested name case-insensitively, and send ClickUp's exact configured spelling.
+An invalid status returns the available names. Dry runs make no ClickUp request,
+so availability validation is deferred until execution.
+
 Custom task IDs such as `WIA-4075` require a ClickUp workspace/team ID when used
 with the ClickUp API. The current MCP actions expect the internal task ID, which
 is returned by ClickUp as the task's `id` field.

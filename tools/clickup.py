@@ -31,6 +31,21 @@ async def find_clickup_users(query: str) -> dict:
     return {"ok": True, "count": len(matches), "matches": matches}
 
 
+async def get_clickup_task_statuses(task_id: str) -> dict:
+    """
+    Return the statuses available for a ClickUp task's home List.
+
+    task_id: ClickUp's internal task ID.
+    """
+
+    try:
+        statuses = await get_clickup_client().get_task_statuses(task_id)
+    except ValueError as error:
+        return {"ok": False, "error": str(error)}
+
+    return {"ok": True, "count": len(statuses), "statuses": statuses}
+
+
 async def add_clickup_comment(
     task_id: str,
     comment: str,
@@ -70,6 +85,41 @@ async def add_clickup_comment(
         "dry_run": False,
         "result": result,
     }
+
+
+async def update_clickup_task_status(
+    task_id: str,
+    status: str,
+    dry_run: bool = True,
+) -> dict:
+    """
+    Set a ClickUp task to a named status such as Development.
+
+    task_id: ClickUp's internal task ID.
+    status: Exact status name available in the task's ClickUp list.
+    dry_run: If true, only preview the update without changing the task.
+    """
+
+    payload = {"task_id": task_id, "status": status}
+    if not task_id.strip():
+        return {"ok": False, "error": "ClickUp task_id is required"}
+    if not status.strip():
+        return {"ok": False, "error": "ClickUp status is required"}
+
+    if dry_run:
+        return {
+            "ok": True,
+            "dry_run": True,
+            "payload": payload,
+            "note": "Status availability is validated only when dry_run is false.",
+        }
+
+    try:
+        result = await get_clickup_client().update_task_status(task_id, status)
+    except ValueError as error:
+        return {"ok": False, "error": str(error)}
+
+    return {"ok": True, "dry_run": False, "result": result}
 
 
 async def create_clickup_task(
